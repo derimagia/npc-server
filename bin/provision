@@ -1,0 +1,4 @@
+#!/bin/sh
+cd $(dirname $0)/../
+ansible-galaxy install -r requirements.yml
+exec ansible-playbook site.yml -i hosts/all
