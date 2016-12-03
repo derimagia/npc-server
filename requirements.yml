@@ -1,1 +1,4 @@
+---
 - src: antoiner77.caddy
+- src: geerlingguy.nodejs
+  version: 3.3.0

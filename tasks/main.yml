@@ -1,0 +1,90 @@
+---
+- include: install_packages_Debian.yml
+  become: True
+  become_user: root
+  tags: package
+  when: "ansible_os_family == 'Debian'"
+
+- include: install_packages_RedHat.yml
+  become: True
+  become_user: root
+  tags: package
+  when: "ansible_os_family == 'RedHat'"
+
+- name: Setup NPC
+  become: True
+  become_user: "{{ hubot_admin }}"
+  git:
+    accept_hostkey: True
+    repo: "{{ hubot_repo }}"
+    dest: "{{ hubot_dir }}"
+  notify:
+    - restart hubot
+
+- name: Setup NPC Packages
+  npm:
+    path: "{{ hubot_dir }}"
+
+- name: Define Hubot environment
+  become: True
+  become_user: "{{ hubot_admin }}"
+  template:
+    src: hubot.env.j2
+    dest: "{{ hubot_dir }}/.env"
+  notify:
+    - restart hubot
+
+- name: Hubot home ownership
+  become: True
+  become_user: root
+  file:
+    path: "{{ item }}"
+    owner: "{{ hubot_admin }}"
+    group: "{{ hubot_admin }}"
+    recurse: "yes"
+  with_items: "{{ hubot_all_dirs }}"
+
+- name: Start Redis
+  become: True
+  become_user: root
+  service:
+    name: "{{ redis_server }}"
+    state: started
+
+- name: Install service init script
+  become: True
+  become_user: root
+  template:
+    src: hubot.init.j2
+    dest: /etc/init.d/hubot
+    mode: "0755"
+  when: (ansible_os_family == "RedHat" and ansible_distribution_major_version < "7")
+  notify:
+    - enable hubot
+    - restart hubot
+
+- name: Install Upstart script
+  become: True
+  become_user: root
+  template:
+    src: hubot.conf.j2
+    dest: /etc/init/hubot.conf
+    mode: "0755"
+  when: (ansible_os_family == "Debian" and ansible_distribution_major_version < "15")
+  notify:
+    - enable hubot
+    - restart hubot
+
+- name: Install systemd unit
+  become: True
+  become_user: root
+  template:
+    src: hubot.service.j2
+    dest: /etc/systemd/system/hubot.service
+    mode: "0755"
+  when: (ansible_os_family == "Debian" and ansible_distribution_major_version >= "15") or
+        (ansible_os_family == "RedHat" and ansible_distribution_major_version > "6")
+  notify:
+    - enable hubot
+    - reload systemd
+    - restart hubot

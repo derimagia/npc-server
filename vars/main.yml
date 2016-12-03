@@ -1,0 +1,14 @@
+---
+nodejs_version: "6.x"
+nodejs_install_npm_user: npc
+nodejs_npm_global_packages:
+  - name: coffee-script
+hubot_admin: npc
+hubot_identity: npc
+hubot_adapter: slack
+hubot_repo: "https://github.com/derimagia/npc.git"
+hubot_admin_dir: "/home/{{ hubot_admin }}"
+hubot_dir: "{{ hubot_admin_dir }}/npc"
+hubot_env: []
+hubot_all_dirs:
+  - "{{ hubot_dir }}"

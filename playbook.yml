@@ -1,0 +1,32 @@
+---
+- name: Install NPC Services
+  hosts: all
+  vars_files:
+    - vars/main.yml
+  pre_tasks:
+    - name: Define config_dir.
+      set_fact:
+        config_dir: "{{ playbook_dir }}"
+      when: config_dir is not defined
+    - include_vars: "{{ item }}"
+      with_fileglob:
+        - "{{ config_dir }}/config.yml"
+    - group: name={{ hubot_admin }} state=present
+    - user: name={{ hubot_admin }} group={{ hubot_admin }} shell=/bin/bash
+  roles:
+    - role: geerlingguy.nodejs
+    - role: antoiner77.caddy
+      caddy_features: git
+      caddy_init_system: systemd
+      caddy_update: yes
+      caddy_config: |
+        npc.sh:80
+        gzip
+        root /var/www
+        proxy / 127.0.0.1:8080/npc {
+            transparent
+        }
+  handlers:
+    - include: handlers/main.yml
+  tasks:
+    - include: tasks/main.yml

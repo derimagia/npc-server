@@ -1,0 +1,6 @@
+.idea
+
+# External roles
+roles/
+
+/config.yml

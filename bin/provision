@@ -1,4 +1,8 @@
 #!/bin/sh
 cd $(dirname $0)/../
+
+echo "\nInstalling vendor ansible packages:\n"
 ansible-galaxy install -r requirements.yml
-exec ansible-playbook site.yml -i hosts/all
+
+echo "\nRunning playbook:\n"
+exec ansible-playbook playbook.yml

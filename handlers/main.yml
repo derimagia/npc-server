@@ -1,0 +1,25 @@
+---
+- name: enable hubot
+  become: True
+  become_user: root
+  service: name=hubot enabled=true
+
+- name: restart hubot
+  become: True
+  become_user: root
+  service: name=hubot state=restarted
+
+- name: start hubot
+  become: True
+  become_user: root
+  service: name=hubot state=started
+
+- name: stop hubot
+  become: True
+  become_user: root
+  service: name=hubot state=stopped
+
+- name: reload systemd
+  become: True
+  become_user: root
+  command: systemctl daemon-reload

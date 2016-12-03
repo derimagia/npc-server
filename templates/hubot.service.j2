@@ -1,0 +1,9 @@
+[Unit]
+Description=Hubot
+
+[Service]
+User={{ hubot_admin }}
+ExecStart={{ hubot_dir }}/bin/npc
+
+[Install]
+WantedBy=multi-user.target
