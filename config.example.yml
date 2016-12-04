@@ -1,3 +1,22 @@
+caddy_config: |
+  npc.sh:443
+  gzip
+  root /var/www
+
+  log syslog
+  errors syslog
+
+  tls email@example.com
+
+  git git@github.com:derimagia/darksupply {
+      interval 86400
+      branch gh-pages
+  }
+
+  proxy /npc 127.0.0.1:8080/npc {
+      transparent
+      without /npc
+  }
 hubot_env:
   HUBOT_LOGLEVEL: "info"
   HUBOT_SLACK_TOKEN: ""

@@ -17,16 +17,10 @@
     - role: geerlingguy.nodejs
     - role: antoiner77.caddy
       caddy_features: git
-      caddy_init_system: systemd
-      caddy_update: yes
-      caddy_config: |
-        npc.sh:80
-        gzip
-        root /var/www
-        proxy / 127.0.0.1:8080/npc {
-            transparent
-        }
+      tags:
+         - caddy
   handlers:
     - include: handlers/main.yml
   tasks:
-    - include: tasks/main.yml
+    - include: tasks/hubot.yml
+    - include: tasks/caddy.yml

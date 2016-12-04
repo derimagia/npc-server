@@ -1,0 +1,10 @@
+# Fix Caddy, see https://github.com/antoiner77/caddy-ansible/issues/25
+- name: Check if the binary can bind to TCP port <1024
+  shell: getcap /usr/local/bin/caddy | grep cap_net_bind_service
+  failed_when: False
+  changed_when: False
+  register: caddy_bind_cap
+
+- name: Set capability on the binary file to be able to bind to TCP port <1024
+  command: setcap cap_net_bind_service=+ep /usr/local/bin/caddy
+  when: caddy_bind_cap.rc > 0
